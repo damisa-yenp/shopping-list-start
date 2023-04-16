@@ -4,6 +4,12 @@ const itemList = document.getElementById('item-list');
 const clearBtn = document.getElementById('clear');
 const itemFilter = document.getElementById('filter');
 
+function displayItems() {
+    const itemFromStorage = getItemFromStorge();
+    itemFromStorage.forEach(item => addItemToDom(item));
+    checkUI();
+}
+
 function onAddItemSubmit(e) {
     e.preventDefault();
 
@@ -40,6 +46,16 @@ function addItemToDom(item) {
 }
 
 function addItemToStorage(item) {
+    const itemFromStorage = getItemFromStorge()
+
+    //Add new item to array
+    itemFromStorage.push(item);
+
+    // Covert to JSOn string and set to local storage
+    localStorage.setItem('item', JSON.stringify(itemFromStorage));
+}
+
+function getItemFromStorge() {
     let itemFromStorage;
 
     if (localStorage.getItem('item') === null) {
@@ -47,11 +63,8 @@ function addItemToStorage(item) {
     } else {
         itemFromStorage = JSON.parse(localStorage.getItem('item'));
     }
-    //Add new item to array
-    itemFromStorage.push(item);
 
-    // Covert to JSOn string and set to local storage
-    localStorage.setItem('item', JSON.stringify(itemFromStorage));
+    return itemFromStorage
 }
 
 
@@ -68,6 +81,8 @@ function createIcon(classes) {
     icon.className = classes;
     return icon;
 }
+
+
 
 function removeItem(e) {
     if (e.target.parentElement.classList.contains('remove-item')) {
@@ -113,10 +128,20 @@ function checkUI() {
     }
 }
 
-//Event Listenners
-itemForm.addEventListener('submit', onAddItemSubmit);
-itemList.addEventListener('click', removeItem);
-clearBtn.addEventListener('click', clearItem);
-itemFilter.addEventListener('input', fiterItem);
+//Initialize app
+function init() {
 
-checkUI();
+
+
+
+    //Event Listenners
+    itemForm.addEventListener('submit', onAddItemSubmit);
+    itemList.addEventListener('click', removeItem);
+    clearBtn.addEventListener('click', clearItem);
+    itemFilter.addEventListener('input', fiterItem);
+    document.addEventListener('DOMContentLoaded', displayItems);
+
+    checkUI();
+}
+
+init();
